@@ -1,0 +1,41 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+local Window = Rayfield:CreateWindow({
+   Name = "Mobile Camlock",
+   LoadingTitle = "Loading...",
+   LoadingSubtitle = "by YourName",
+   ConfigurationSaving = { Enabled = false }
+})
+local MainTab = Window:CreateTab("PvP", nil) 
+MainTab:CreateSection("Target Tools")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestPlayer = player
+            end
+        end
+    end
+    return closestPlayer
+end
+_G.Aimbot = false
+MainTab:CreateToggle({
+   Name = "Enable Camlock",
+   CurrentValue = false,
+   Callback = function(Value)
+       _G.Aimbot = Value
+       while _G.Aimbot do
+           local target = getClosestPlayer()
+           if target and target.Character and target.Character:FindFirstChild("Head") then
+               Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+           end
+           task.wait()
+       end
+   end,
+})
